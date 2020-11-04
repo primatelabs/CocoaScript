@@ -29,9 +29,13 @@ extern NSRange TE_findMatchingBraceForRangeInString(NSRange origRange, NSString 
 
 // Variable substitution
 
+#if !defined(__arm64__)
+
 extern unsigned TE_expandVariablesInString(NSMutableString *input, NSString *variableStart, NSString *variableEnd, id modalDelegate, SEL callbackSelector, void *context);
     // Variable references must begin with variableStart and end with variableEnd.  There's no support for "escaping" the end string.
     // callbackSelector must have the following signature:
     //     - (NSString *)expansionForVariableName:(NSString *)name inputString:(NSString *)input variableNameRange:(NSRange)nameRange fullVariableRange:(NSRange)fullRange context:(void *)context;
     // The return value of the callback is the replacement for the whole variable reference, or nil if the reference should be left unreplaced.
     // The return value of the funtion is the number of variables found and replaced.
+
+#endif

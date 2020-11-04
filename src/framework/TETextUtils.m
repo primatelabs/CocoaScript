@@ -475,6 +475,9 @@ NSRange TE_findMatchingBraceForRangeInString(NSRange origRange, NSString *string
     return matchRange;
 }
 
+
+#if !defined(__arm64__)
+
 // Variable substitution
 
 unsigned TE_expandVariablesInString(NSMutableString *input, NSString *variableStart, NSString *variableEnd, id modalDelegate, SEL callbackSelector, void *context) {
@@ -535,3 +538,5 @@ unsigned TE_expandVariablesInString(NSMutableString *input, NSString *variableSt
 
     return count;
 }
+
+#endif

@@ -789,6 +789,23 @@ NSArray * MOParseObjCMethodEncoding(const char *typeEncoding) {
 // Depending on structure size & architecture, structures are returned as function first argument (done transparently by ffi) or via registers
 //
 
+#if defined(__arm64__)
+
+// objc_msgSend_stret is not needed on ARM64.  x86-64 does struct returns by
+// allocating memory for the return value on the stack, then passing the
+// address of that memory as an implicit first parameter. That means all the
+// other parameters shift down, so you need a different msgSend that knows to
+// look for the object in argument 2 and the selector in argument 3.
+//
+// ARM64 does struct returns by passing the struct address in x8 which isn't
+// used for parameters otherwise, so one function can do it all.
+
+void * MOInvocationGetObjCCallAddressForArguments(NSArray *arguments) {
+    return objc_msgSend;
+}
+
+#else
+
 #if defined(__ppc__)
 #   define SMALL_STRUCT_LIMIT    4
 #elif defined(__ppc64__)
@@ -864,6 +881,8 @@ void * MOInvocationGetObjCCallAddressForArguments(NSArray *arguments) {
     
     return callAddress;
 }
+
+#endif
 
 
 #pragma mark -
